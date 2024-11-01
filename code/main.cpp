@@ -126,7 +126,6 @@ public:
   cout<< updatedData;
   return updatedData;
 }
-
 };
 
 class check {
@@ -478,7 +477,8 @@ public:
     // Check if choice is valid
     if (choice >= 1 && choice <= data.size()) {
       cout << "You selected: " << data[choice - 1][0] << endl;
-    } else {
+    } 
+    else {
       cout << "Invalid choice, please enter a number between 1 and "
            << data.size() << endl;
     }
@@ -816,7 +816,6 @@ public:
 
     savedata_gen(to_string(ID-1)+","+work+","+deadline, assigned_work+data[ID-1][1]+to_string(ID-1)+".txt");
   }
-
 };
 
 class database_admin : public check, public filehandle {
