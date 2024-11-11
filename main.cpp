@@ -9,29 +9,29 @@
 #include <string>    //to store and manipulate the string
 #include <vector>    //to store the data in list format 2D
 #include <map>       //creating maps for data
-bool admin_user;
+
 using namespace std;
+
+bool admin_user;
 static string basedir = "Data/";
 static string Datafile = basedir + "data.txt";
-static string Attedata = basedir + "";
+static string Attedata = basedir + "date_record/";
 static string Attefile = Attedata + "attendance_history.txt";
-static string assigned_work = basedir + "";
+static string assigned_work = basedir + "assigned_works/";
 static string deleted_data = basedir + "deleted_data.txt";
 static string status = basedir + "status.txt";
-// static string admin_file=basedir+"";
-// static string admin_file=basedir+"";
 
 class filehandle
 {
-
 public:
+  // this function is responsible to see that the file exits at that location or not
   bool fileExists(const std::string &filename)
   {
     std::ifstream file(filename);
     return file.good(); // Returns true if file exists, false otherwise
   }
-  // this will modify all the readed lines from the file to a fixed format of 2d
-  // array and retrun that array
+
+  // this will modify all the readed lines from the file to an array
   vector<string> split(const string &str, char delimiter)
   {
     vector<string> tokens;
@@ -45,7 +45,7 @@ public:
     return tokens;
   }
 
-  // Function to read lines from a file and return them as a 2D vector
+  // Function to read lines from a file and return them as a 2D vector by using split function
   vector<vector<string>> readLines(string file)
   {
     ifstream infile(file); // Open the file
@@ -76,6 +76,7 @@ public:
   {
     // Open file in append mode
     ofstream outputFile(file, ios::app);
+    // it will check that the file is able to be opened or not
     if (!outputFile)
     {
       cout << "Error opening file for appending!" << endl;
@@ -91,6 +92,7 @@ public:
     outputFile.close();
   }
 
+  // generalize function for writing into the file from scratch and delete the existing data
   void writedata_gen(string data, string file)
   {
     // Open file in append mode
@@ -109,7 +111,7 @@ public:
     outputFile.close();
   }
 
-  // this will handle the extraction part of data from database
+  // this will handle the extraction part ie reading of specific data from database
   void get_data2(vector<string> &tokens)
   {
     cout << "empid:          | " << tokens[0] << endl
@@ -154,7 +156,7 @@ protected: // here I had declared all the constant functions and templates as
   string dept, name, email, position, joindate, phoneno, emergencyno;
   int empid, age;
   int salary, holidays;
-
+  // most of these functions are predefined in doumentation of that header file
   // Function to get the current date
   string getCurrentDate()
   {
@@ -226,8 +228,7 @@ protected: // here I had declared all the constant functions and templates as
   bool valid_department(string dept)
   {
     // List of valid departments
-    string valid_depts[] = {"HR", "IT", "Finance",
-                            "Marketing", "Operations", "Sales"};
+    string valid_depts[] = {"HR", "IT", "Finance","Marketing", "Operations", "Sales"};
 
     for (int i = 0; i < 6; i++)
     {
@@ -486,14 +487,14 @@ public:
     bool alreadyCheckedIn = false;
 
     // Check if today's attendance record exists
-    if (!fh.fileExists(date))
+    if (!fh.fileExists(Attefile))
     {
       cout << "Creating attendance record for " << date << endl;
       fh.savedata_gen(date, Attefile); // Log the new attendance day in history
     }
 
     // Check if the employee has already checked in today
-    if (fh.fileExists(date))
+    if (fh.fileExists(Attedata + date + ".txt"))
     {
       auto temp = fh.readLines(Attedata + date + ".txt"); // Read the existing attendance data for today
 
@@ -661,6 +662,7 @@ public:
     return rank1 > rank2;                                    // Sort in descending order (higher rank first)
   }
 
+  // this will filter all the employee based on a perticular department
   vector<vector<string>> employeesfilter(vector<string> &tokens)
   {
     vector<vector<string>> filter;
@@ -711,22 +713,23 @@ public:
     return filter;
   }
 
+  // function responsible to show employee the work they are being assigned
   void displayAssignedWorks(vector<string> &tokens)
   {
-    filehandle fh;
+    // filehandle fh;
     string employeeID = tokens[0]; // Assuming tokens[0] contains the employee's ID
 
-    string filepath = employeeID;
+    string filepath = assigned_work + tokens[1] + tokens[0] + ".txt";
 
     // Check if the file for assigned works exists
-    if (!fh.fileExists(filepath))
+    if (fileExists(filepath))
     {
       cout << "No works have been assigned to this employee yet." << endl;
       return;
     }
 
     // Read the assigned works from the file
-    vector<vector<string>> assignedWorks = fh.readLines(filepath);
+    vector<vector<string>> assignedWorks = readLines(filepath);
 
     if (assignedWorks.empty())
     {
@@ -745,6 +748,8 @@ public:
   }
 
   // this line will show the list of all the workers under you
+  // function responsible the employee to see the network how employee are connected to each other 
+  // here head can assign work to its co-workers and employee below them directly
   void displayWorkersAndCoworkers(vector<string> &filter)
   {
     // Display workers under the current employee and their coworkers
@@ -764,6 +769,7 @@ public:
   }
 
   // Function to update the employee status
+  // we made it text based so that even if user want to add any status so he can do so
   void setCurrentStatus(vector<string> &tokens)
   {
     string username = tokens[1]; // Assuming the first token is the username
@@ -1008,8 +1014,7 @@ public:
 
     // Generate username and password
     string username = generate_username(email); // Generate username from email
-    string password =
-        generate_password(8); // Generate random 8-character password
+    string password = generate_password(8); // Generate random 8-character password
 
     string data = to_string(empid) + "," + username + "," + password + "," + name + "," + position + "," + dept + "," + to_string(holidays) + "," + to_string(age) + "," + phoneno + "," + emergencyno + "," + email + "," + joindate + "," + to_string(salary);
 
@@ -1133,8 +1138,7 @@ public:
       cout << "4. remaining leaves" << endl;
       cout << "5. employee details" << endl;
       cout << "6. Edit profile" << endl;
-      cout << "7. exit" << endl;
-      /* code */
+      cout << "0. exit" << endl;
       int choice;
       cin >> choice;
       switch (choice)
@@ -1142,31 +1146,26 @@ public:
       case 1:
       {
         check_in(tokens);
-        /* code */
         break;
       }
       case 2:
       {
         view_employee_record(tokens);
-        /* code */
         break;
       }
       case 3:
       {
         taken_leave(tokens);
-        /* code */
         break;
       }
       case 4:
       {
         show_remaining_leaves(tokens);
-        /* code */
         break;
       }
       case 5:
       {
         get_data2(tokens);
-        /* code */
         break;
       }
       case 6:
@@ -1176,10 +1175,9 @@ public:
         get_data2(tokens);
         break;
       }
-      case 7:
+      case 0:
       {
         cout << "entering back to main menu" << endl;
-        /* code */
         return;
       }
       default:
@@ -1194,11 +1192,11 @@ public:
 
 class admin_interface : public employee_interface, public database_admin
 {
-
 public:
   // this will display record of users
   int acess_user(vector<vector<string>> &data)
   {
+    // this function is responsible for reading data from database and give user choice to choose make it
     cout << "select the user of which data you want to update" << endl;
     cout << "list all entries" << endl;
     int cho = userfilter(data, true);
@@ -1273,57 +1271,41 @@ public:
 
 class loginsys : private admin_interface
 {
-
 public:
   // this handles the login of user
   void login(string &username, string &password)
   {
-    ifstream inputFile(Datafile);
-    if (!inputFile)
-    {
-      cout << "Error opening file!" << endl;
-      return;
-    }
-
-    string line;
-    int counter = 0;
-
-    // Read file line by line
-    while (getline(inputFile, line))
-    {
-      counter++;
-      // Split the line into tokens using the split function
-      vector<string> tokens = database_admin::split(line, ',');
-
+  
+  // we are reading data again and again so that if data is updated later on via another instance during expantion of system like adding multiple instances of users login 
+  // note we didn't worked on multiple instances of login till yet but made in such a way so that if there is that sort of thing occur then it will be easier to do so
+  auto data=database_admin::readLines(Datafile);
+    // this below for loop is used to treverse the whole array so that data after reading the database for login
+    for(int i;i>data.size();i++){
       // Assign values to variables
-      string emp_username = tokens[1];
-      string emp_password = tokens[2];
+      string emp_username = data[i][1];
+      string emp_password = data[i][2];
 
       // Verify the credentials
       if (emp_username == username && emp_password == password)
       {
-
         cout << "Login successful!" << endl;
         cout << "Displaying employee data..." << endl;
-        cout << "Employee ID: " << tokens[0] << endl;
-        cout << "Name: " << tokens[3] << endl;
-        cout << "Position: " << tokens[4] << endl;
-        cout << "Department: " << tokens[5] << endl;
-        // cout << "Holidays: " << emp_holidays << endl;
-        cout << "Age: " << tokens[7] << endl;
-        cout << "Phone Number: " << tokens[8] << endl;
-        // cout << "Email: " << emp_email << endl;
-        cout << "Join Date: " << tokens[11] << endl;
-        // cout << "Salary: " << emp_salary << endl;
-        employee(tokens);
+        cout << "Employee ID: " << data[i][0] << endl;
+        cout << "Name: " << data[i][3] << endl;
+        cout << "Position: " << data[i][4] << endl;
+        cout << "Department: " << data[i][5] << endl;
+        cout << "Age: " << data[i][7] << endl;
+        cout << "Phone Number: " << data[i][8] << endl;
+        cout << "Email: " << data[i][10] << endl;
+        cout << "Join Date: " << data[i][11] << endl;
+        employee(data[i]);
         break;
       }
-      else if (database_admin::readLines(Datafile).size() == counter)
+      else if (i==data.size())
       {
         cout << "invalid credentials try again" << endl;
       }
     }
-    inputFile.close();
     return;
   }
 
@@ -1331,6 +1313,7 @@ public:
   void start()
   {
     string username, password;
+    // here while loop is used so that if user types the wrong id password then it will just runned until system is running 
     while (true)
     {
       cout << "    WELCOME    " << endl;
@@ -1343,11 +1326,13 @@ public:
       if (username == "admin" && password == "royalbee")
       {
         cout << "Login successful!" << endl;
-        admin(); // If admin logs in, proceed to admin interface
+        // here below function will give admin area login succesfully
+        admin();
         return;
       }
       else
       {
+        // here the below function is responsible for users login
         login(username, password);
       }
     }
@@ -1356,6 +1341,7 @@ public:
 
 int main()
 {
+  // this is the main driver code where the object for isolated login system is called 
   loginsys a;
   a.start();
   return 0;
