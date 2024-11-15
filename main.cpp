@@ -228,7 +228,7 @@ protected: // here I had declared all the constant functions and templates as
   bool valid_department(string dept)
   {
     // List of valid departments
-    string valid_depts[] = {"HR", "IT", "Finance","Marketing", "Operations", "Sales"};
+    string valid_depts[] = {"HR", "IT", "Finance", "Marketing", "Operations", "Sales"};
 
     for (int i = 0; i < 6; i++)
     {
@@ -341,32 +341,32 @@ protected: // here I had declared all the constant functions and templates as
   }
 
   // this will generate a sequential employee id everytime and doesnt repeat
-  int generate_empid()
-  {
-    ifstream infile(Datafile);
-    string line;
-    int line_count = 0;
+  // int generate_empid()
+  // {
+  //   ifstream infile(Datafile);
+  //   string line;
+  //   int line_count = 0;
 
-    // Check if the file exists and is open
-    if (infile.is_open())
-    {
-      // Count the number of lines (entries) in the file
-      while (getline(infile, line))
-      {
-        line_count++;
-      }
-      infile.close();
-    }
-    else
-    {
-      cout << "File not found. Starting fresh database." << endl;
-    }
+  //   // Check if the file exists and is open
+  //   if (infile.is_open())
+  //   {
+  //     // Count the number of lines (entries) in the file
+  //     while (getline(infile, line))
+  //     {
+  //       line_count++;
+  //     }
+  //     infile.close();
+  //   }
+  //   else
+  //   {
+  //     cout << "File not found. Starting fresh database." << endl;
+  //   }
 
-    return line_count + 1; // The new employee ID is one more than the current
-                           // number of entries
-  }
+  //   return line_count + 1; // The new employee ID is one more than the current
+  //                          // number of entries
+  // }
 
-  // Function to generate random alphanumeric password
+  // // Function to generate random alphanumeric password
   string generate_password(int length)
   {
     string characters =
@@ -748,7 +748,7 @@ public:
   }
 
   // this line will show the list of all the workers under you
-  // function responsible the employee to see the network how employee are connected to each other 
+  // function responsible the employee to see the network how employee are connected to each other
   // here head can assign work to its co-workers and employee below them directly
   void displayWorkersAndCoworkers(vector<string> &filter)
   {
@@ -973,7 +973,6 @@ public:
 
   void setdata()
   {
-    empid = generate_empid();
     email = check_email(); // Validated email input
     name = checkstr("name");
     joindate = check_date(); // Check for a valid date in DDMMYYYY format
@@ -1009,12 +1008,16 @@ public:
   // this command will handle all the data to append in the database as usual
   void savedata()
   {
+    vector<vector<string>> datar = readLines(Datafile);
+    vector<string> last = datar[datar.size()-1];
+    string last_empid=last[0];
+    empid = stoi(last_empid) + 1;
     // Seed random number generator for password generation
     srand(time(0));
 
     // Generate username and password
     string username = generate_username(email); // Generate username from email
-    string password = generate_password(8); // Generate random 8-character password
+    string password = generate_password(8);     // Generate random 8-character password
 
     string data = to_string(empid) + "," + username + "," + password + "," + name + "," + position + "," + dept + "," + to_string(holidays) + "," + to_string(age) + "," + phoneno + "," + emergencyno + "," + email + "," + joindate + "," + to_string(salary);
 
@@ -1275,12 +1278,13 @@ public:
   // this handles the login of user
   void login(string &username, string &password)
   {
-  
-  // we are reading data again and again so that if data is updated later on via another instance during expantion of system like adding multiple instances of users login 
-  // note we didn't worked on multiple instances of login till yet but made in such a way so that if there is that sort of thing occur then it will be easier to do so
-  auto data=database_admin::readLines(Datafile);
+
+    // we are reading data again and again so that if data is updated later on via another instance during expantion of system like adding multiple instances of users login
+    // note we didn't worked on multiple instances of login till yet but made in such a way so that if there is that sort of thing occur then it will be easier to do so
+    auto data = database_admin::readLines(Datafile);
     // this below for loop is used to treverse the whole array so that data after reading the database for login
-    for(int i;i>data.size();i++){
+    for (int i; i > data.size(); i++)
+    {
       // Assign values to variables
       string emp_username = data[i][1];
       string emp_password = data[i][2];
@@ -1301,7 +1305,7 @@ public:
         employee(data[i]);
         break;
       }
-      else if (i==data.size())
+      else if (i == data.size())
       {
         cout << "invalid credentials try again" << endl;
       }
@@ -1313,7 +1317,7 @@ public:
   void start()
   {
     string username, password;
-    // here while loop is used so that if user types the wrong id password then it will just runned until system is running 
+    // here while loop is used so that if user types the wrong id password then it will just runned until system is running
     while (true)
     {
       cout << "    WELCOME    " << endl;
@@ -1341,7 +1345,7 @@ public:
 
 int main()
 {
-  // this is the main driver code where the object for isolated login system is called 
+  // this is the main driver code where the object for isolated login system is called
   loginsys a;
   a.start();
   return 0;
