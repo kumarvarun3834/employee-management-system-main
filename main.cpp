@@ -340,32 +340,6 @@ protected: // here I had declared all the constant functions and templates as
     return date;
   }
 
-  // this will generate a sequential employee id everytime and doesnt repeat
-  // int generate_empid()
-  // {
-  //   ifstream infile(Datafile);
-  //   string line;
-  //   int line_count = 0;
-
-  //   // Check if the file exists and is open
-  //   if (infile.is_open())
-  //   {
-  //     // Count the number of lines (entries) in the file
-  //     while (getline(infile, line))
-  //     {
-  //       line_count++;
-  //     }
-  //     infile.close();
-  //   }
-  //   else
-  //   {
-  //     cout << "File not found. Starting fresh database." << endl;
-  //   }
-
-  //   return line_count + 1; // The new employee ID is one more than the current
-  //                          // number of entries
-  // }
-
   // // Function to generate random alphanumeric password
   string generate_password(int length)
   {
