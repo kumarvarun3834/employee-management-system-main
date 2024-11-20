@@ -126,7 +126,7 @@ public:
          << "email:          | " << tokens[10] << endl
          << "holidays:       | " << tokens[6] << endl
          << "salary:         | " << tokens[12] << endl
-         << "joindate:       | " << tokens[11] << endl;
+         << "joindate:       | " << tokens[11] << endl<<endl;
   }
 
   // this will autoreturn string of input vector
@@ -884,15 +884,16 @@ public:
   void delete_entry(vector<vector<string>> &tokens, int choice)
   {
     string db;
-
+    bool deleted=false;
     // Iterate through tokens and build the new database content
     for (int i = 0; i < tokens.size(); i++)
     {
-      if (i == choice - 1)
+      if (i == choice - 1 && deleted==false)
       {
         // Save deleted entry to "deleted_data" file
         savedata_gen(writing_general(tokens[i]), deleted_data);
         tokens.erase(tokens.begin() + i);
+        deleted=true;
       }
       else
       {
@@ -903,7 +904,7 @@ public:
 
     // Write the updated database content back to Datafile file
     writedata_gen(db, Datafile);
-    cout << "Entry deleted and database updated successfully." << endl;
+    cout << "Entry deleted and database updated successfully." << endl<< endl;
   }
 
   // this is the logic for the work assigning to the employee ie writing to file
@@ -999,7 +1000,7 @@ public:
     cout << "\n\nUSERNAME: " << username << endl;
     cout << "PASSWORD: " << password << endl;
     cout
-        << "username and passward is used for login purpose be sure to save it";
+        << "username and passward is used for login purpose be sure to save it"<<endl;
     // outputFile.close();
     savedata_gen(data, Datafile);
   }
