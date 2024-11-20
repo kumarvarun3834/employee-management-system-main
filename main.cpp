@@ -884,16 +884,14 @@ public:
   void delete_entry(vector<vector<string>> &tokens, int choice)
   {
     string db;
-    bool deleted=false;
     // Iterate through tokens and build the new database content
     for (int i = 0; i < tokens.size(); i++)
     {
-      if (i == choice - 1 && deleted==false)
+      if (i == choice - 1)
       {
         // Save deleted entry to "deleted_data" file
         savedata_gen(writing_general(tokens[i]), deleted_data);
-        tokens.erase(tokens.begin() + i);
-        deleted=true;
+        // tokens.erase(tokens.begin() + i);
       }
       else
       {
