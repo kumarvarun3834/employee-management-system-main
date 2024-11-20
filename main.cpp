@@ -20,6 +20,7 @@ static string Attefile = Attedata + "attendance_history.txt";
 static string assigned_work = basedir + "assigned_works/";
 static string deleted_data = basedir + "deleted_data.txt";
 static string status = basedir + "status.txt";
+static string leaves = basedir + "leaves.txt";
 
 class filehandle
 {
@@ -560,7 +561,7 @@ public:
     cout << "data updated" << endl;
     savedata_gen(updatedData, Datafile);
     record += tokens[1] + "," + tokens[3] + "," + tokens[4] + "," + tokens[5] + getCurrentDate() + "," + to_string(leaveDays) + "," + tokens[8] + "," + "\n";
-    savedata_gen(record, Attefile);
+    savedata_gen(record, leaves);
   }
 
   // Function to show remaining leaves for the employee
@@ -691,12 +692,10 @@ public:
   void displayAssignedWorks(vector<string> &tokens)
   {
     // filehandle fh;
-    string employeeID = tokens[0]; // Assuming tokens[0] contains the employee's ID
-
+    string employeeID = tokens[0];
     string filepath = assigned_work + tokens[1] + tokens[0] + ".txt";
-
     // Check if the file for assigned works exists
-    if (fileExists(filepath))
+    if (!fileExists(filepath))
     {
       cout << "No works have been assigned to this employee yet." << endl;
       return;
@@ -715,10 +714,12 @@ public:
     cout << "Assigned works for employee " << employeeID << ":" << endl;
     for (int i = 0; i < assignedWorks.size(); ++i)
     {
-      cout << i + 1 << ". Work: " << assignedWorks[i][1] // Assuming 1st column is work
-           << ", Deadline: " << assignedWorks[i][2]      // Assuming 2nd column is deadline
+      cout << i + 1 << ". Work: " << assignedWorks[i][1]
+           << ", Deadline: " << assignedWorks[i][2]
            << endl;
     }
+    cout<<endl;
+    cout<<"-----------------------------------------";
   }
 
   // this line will show the list of all the workers under you
@@ -919,7 +920,7 @@ public:
     cout << "deadline: " << deadline << endl
          << "work    : " << work << endl;
 
-    savedata_gen(to_string(ID - 1) + "," + work + "," + deadline, assigned_work + data[ID - 1][1] + to_string(ID - 1) + ".txt");
+    savedata_gen(to_string(ID - 1) + "," + work + "," + deadline, assigned_work + data[ID - 1][1] + to_string(ID) + ".txt");
   }
 };
 
@@ -983,8 +984,8 @@ public:
   void savedata()
   {
     vector<vector<string>> datar = readLines(Datafile);
-    vector<string> last = datar[datar.size()-1];
-    string last_empid=last[0];
+    vector<string> last = datar[datar.size() - 1];
+    string last_empid = last[0];
     empid = stoi(last_empid) + 1;
     // Seed random number generator for password generation
     srand(time(0));
@@ -1256,13 +1257,14 @@ public:
     // we are reading data again and again so that if data is updated later on via another instance during expantion of system like adding multiple instances of users login
     // note we didn't worked on multiple instances of login till yet but made in such a way so that if there is that sort of thing occur then it will be easier to do so
     auto data = database_admin::readLines(Datafile);
+    // cout<<data.size()<<endl;
     // this below for loop is used to treverse the whole array so that data after reading the database for login
-    for (int i; i > data.size(); i++)
+    for (int i; i < data.size(); i++)
     {
       // Assign values to variables
       string emp_username = data[i][1];
       string emp_password = data[i][2];
-
+      // cout<<emp_username<<" : "<<emp_password<<endl;
       // Verify the credentials
       if (emp_username == username && emp_password == password)
       {
